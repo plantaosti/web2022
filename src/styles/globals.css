@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.swiper-pagination-bullet-active {
+  @apply bg-green-600;
+}
+.swiper-pagination {
+  @apply !bottom-0;
+}
