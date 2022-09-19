@@ -1,0 +1,10 @@
+query GetFarmaciasAll {
+  farmacias(stage: PUBLISHED) {
+      id
+      slug
+      name
+      urllogo
+      neighborhood
+      phone
+    }
+}

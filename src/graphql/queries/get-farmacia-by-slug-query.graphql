@@ -1,0 +1,18 @@
+query GetFarmaciaBySlug($slug: String) {
+  farmacia(where: { slug: $slug }) {
+    id
+    slug
+    urllogo
+    name
+    phone
+    whatsapp
+    instagram
+    programas
+    description
+    street
+    neighborhood
+    zipCode
+    city
+    email
+  }
+}

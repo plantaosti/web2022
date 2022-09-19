@@ -1,0 +1,15 @@
+query GetPlantoesStartSkip($end: DateTime){
+  plantoes(where: {datetimeend_gte: $end}, skip: 3) {
+    id
+    datetimestart
+    datetimeend
+    farmacias {
+      ... on Farmacia {
+        id
+        name
+        neighborhood
+        phone
+      }
+    }
+  }
+}

@@ -8,3 +8,6 @@
 .swiper-pagination {
   @apply !bottom-0;
 }
+.swiper-button-next {
+  @apply text-sm;
+}
