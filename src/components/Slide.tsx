@@ -1,15 +1,22 @@
 import Link from "next/link";
 import ptBR from "date-fns/locale/pt-BR";
 import { format, parseISO } from "date-fns";
-import { Navigation, Pagination } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import { useKeenSlider } from 'keen-slider/react'
+import 'keen-slider/keen-slider.min.css'
 import { useGetPlantoesStartEndQuery } from "../graphql/generated";
 import Image from "next/image";
+import { useState } from "react";
 
 export function Slide() {
+  const [loaded, setLoaded] = useState()
+  const [sliderRef,  instanceRef] = useKeenSlider({
+    slides: {
+      perView: 1,
+      spacing: 48,
+    },
+    loop: true
+  })
+
   const end = format(Date.now(), "yyyy-MM-d'T'12:00:00+00:00");
   const { data, loading } = useGetPlantoesStartEndQuery({
     variables: {
@@ -30,39 +37,21 @@ export function Slide() {
   }
   return (
     <section className="w-full flex-col bg-gray-100 dark:bg-gray-300 mt-9 pb-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 max-w-[980px] m-auto">
-        <Swiper
-          className="w-[calc(100vw - 12rem)] md:w-[600px] px-10 my-6 mx-4 md:order-2 drop-shadow-xl flex flex-1"
-          effect={"coverflow"}
-          slidesPerView={"auto"}
-          grabCursor={true}
-          loop={true}
-          spaceBetween={24}
-          modules={[Pagination, Navigation]}
-          breakpoints={{
-            640: { slidesPerView: 1 },
-            768: { slidesPerView: 1 },
-            1024: { slidesPerView: 1 },
-          }}
-          pagination={true}
-          navigation={{
-            prevEl: ".swiper-button-prev",
-            nextEl: ".swiper-button-next",
-          }}
-        >
+      <div className="grid grid-cols-1 md:grid-cols-2 p-6 max-w-[980px] m-auto">
+        <div ref={sliderRef} className="keen-slider my-6 md:order-2 drop-shadow-xl">
           {data?.plantoes.map((plantao) => {
             return (
-              <SwiperSlide key={plantao.id} className="">
+              <div key={plantao.id} className="keen-slider__slide md:w-[200px] order-2 bg-white rounded-lg">
                 <Image
                   className="rounded-t-lg"
                   width={720}
-                  height={470}
+                  height={480}
                   src={`/images/${plantao.farmacias?.urllogo}`}
                   alt={`Foto farmácia ${plantao.farmacias?.name}`}
                 />
 
                 <div className="bg-white p-4 rounded-b-lg">
-                  <h3 className="text-gray-400 text-lg mb-3 md:text-xl lg:text-2xl font-bold">
+                  <h3 className="text-gray-400 text-lg md:text-xl lg:text-2xl font-bold">
                     {plantao.farmacias?.name}
                   </h3>
                   <div className="">
@@ -90,13 +79,31 @@ export function Slide() {
                     </div>
                   </div>
                 </div>
-              </SwiperSlide>
+              </div>
             );
           })}
+          {loaded && instanceRef.current && (
+          <>
+            <Arrow
+              left
+              onClick={(e) =>
+                e.stopPropagation() || instanceRef.current?.prev()
+              }
+              disabled={currentSlide === 0}
+            />
 
-          <div className="swiper-button-prev text-white after:content-[''] after:text-sm"></div>
-          <div className="swiper-button-next text-white after:content-[''] after:text-sm"></div>
-        </Swiper>
+            <Arrow
+              onClick={(e) =>
+                e.stopPropagation() || instanceRef.current?.next()
+              }
+              disabled={
+                currentSlide ===
+                instanceRef.current.track.details.slides.length - 1
+              }
+            />
+          </>
+        )}
+        </div>
         <div className="p-6 flex flex-col gap-5 justify-center align-middle order-1 md:max-w-sm lg:max-w-md">
           <h3 className="text-xl lg:text-5xl font-bold text-gray-400 dark:text-gray-100">
             Farmácia de Plantão
