@@ -1,21 +1,22 @@
 import Link from "next/link";
 import ptBR from "date-fns/locale/pt-BR";
 import { format, parseISO } from "date-fns";
-import { useKeenSlider } from 'keen-slider/react'
-import 'keen-slider/keen-slider.min.css'
+import { useKeenSlider } from "keen-slider/react";
+import "keen-slider/keen-slider.min.css";
 import { useGetPlantoesStartEndQuery } from "../graphql/generated";
 import Image from "next/image";
 import { useState } from "react";
+import { Calendar } from "phosphor-react";
 
 export function Slide() {
-  const [loaded, setLoaded] = useState()
-  const [sliderRef,  instanceRef] = useKeenSlider({
+  const [loaded, setLoaded] = useState();
+  const [sliderRef, instanceRef] = useKeenSlider({
     slides: {
       perView: 1,
       spacing: 48,
     },
-    loop: true
-  })
+    loop: true,
+  });
 
   const end = format(Date.now(), "yyyy-MM-d'T'12:00:00+00:00");
   const { data, loading } = useGetPlantoesStartEndQuery({
@@ -38,10 +39,16 @@ export function Slide() {
   return (
     <section className="w-full flex-col bg-gray-100 dark:bg-gray-300 mt-9 pb-6">
       <div className="grid grid-cols-1 md:grid-cols-2 p-6 max-w-[980px] m-auto">
-        <div ref={sliderRef} className="keen-slider my-6 md:order-2 drop-shadow-xl">
+        <div
+          ref={sliderRef}
+          className="keen-slider my-6 md:order-2 drop-shadow-xl"
+        >
           {data?.plantoes.map((plantao) => {
             return (
-              <div key={plantao.id} className="keen-slider__slide md:w-[200px] order-2 bg-white rounded-lg">
+              <div
+                key={plantao.id}
+                className="keen-slider__slide md:w-[200px] order-2 bg-white rounded-lg"
+              >
                 <Image
                   className="rounded-t-lg"
                   width={720}
@@ -65,13 +72,13 @@ export function Slide() {
                     </p>
                     <div className="flex justify-between ">
                       <span className="text-sm text-gray-500 flex gap-2 items-center p-1">
-                        <i className="ri-calendar-event-fill text-green-100"></i>
+                        <Calendar size={32} className="text-green-100" />
                         {format(parseISO(plantao.datetimestart), "dd/MM/yy", {
                           locale: ptBR,
                         })}
                       </span>
                       <span className="text-sm text-gray-500 flex gap-2 items-center p-1">
-                        <i className="ri-calendar-event-fill text-red-500"></i>
+                        <Calendar size={32} className="text-red-500" />
                         {format(parseISO(plantao.datetimeend), "dd/MM/yy", {
                           locale: ptBR,
                         })}
@@ -82,27 +89,6 @@ export function Slide() {
               </div>
             );
           })}
-          {loaded && instanceRef.current && (
-          <>
-            <Arrow
-              left
-              onClick={(e) =>
-                e.stopPropagation() || instanceRef.current?.prev()
-              }
-              disabled={currentSlide === 0}
-            />
-
-            <Arrow
-              onClick={(e) =>
-                e.stopPropagation() || instanceRef.current?.next()
-              }
-              disabled={
-                currentSlide ===
-                instanceRef.current.track.details.slides.length - 1
-              }
-            />
-          </>
-        )}
         </div>
         <div className="p-6 flex flex-col gap-5 justify-center align-middle order-1 md:max-w-sm lg:max-w-md">
           <h3 className="text-xl lg:text-5xl font-bold text-gray-400 dark:text-gray-100">
