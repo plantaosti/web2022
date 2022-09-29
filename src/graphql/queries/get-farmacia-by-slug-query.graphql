@@ -7,12 +7,19 @@ query GetFarmaciaBySlug($slug: String) {
     phone
     whatsapp
     instagram
-    programas
     description
     street
     neighborhood
     zipCode
     city
     email
+    fazentrega
+    programas {
+      ... on Itemprograma {
+        name
+        ativo
+        id
+      }
+    }
   }
 }
